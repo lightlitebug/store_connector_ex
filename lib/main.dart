@@ -92,28 +92,36 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<CounterState, ViewModel>(
       converter: (Store<CounterState> store) => ViewModel.fromStore(store),
-      builder: (BuildContext context, ViewModel vm) {
-        if (vm.counter == 3) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: Text('counter: ${vm.counter}'),
-                );
-              },
+      onInitialBuild: (ViewModel vm) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const AlertDialog(
+              content: Text('onInitialBuild'),
             );
-          });
-        } else if (vm.counter == 5) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const OtherPage(),
-              ),
-            );
-          });
+          },
+        );
+      },
+      onWillChange: (ViewModel? prev, ViewModel current) {
+        if (current.counter == 3) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                content: Text('counter: ${current.counter}'),
+              );
+            },
+          );
+        } else if (current.counter == 5) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const OtherPage(),
+            ),
+          );
         }
+      },
+      builder: (BuildContext context, ViewModel vm) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Counter'),
