@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
+import 'other_page.dart';
+
 class CounterState {
   final int counter;
   const CounterState({
@@ -91,6 +93,27 @@ class MyHomePage extends StatelessWidget {
     return StoreConnector<CounterState, ViewModel>(
       converter: (Store<CounterState> store) => ViewModel.fromStore(store),
       builder: (BuildContext context, ViewModel vm) {
+        if (vm.counter == 3) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: Text('counter: ${vm.counter}'),
+                );
+              },
+            );
+          });
+        } else if (vm.counter == 5) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const OtherPage(),
+              ),
+            );
+          });
+        }
         return Scaffold(
           appBar: AppBar(
             title: const Text('Counter'),
